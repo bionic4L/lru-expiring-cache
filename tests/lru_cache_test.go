@@ -48,7 +48,7 @@ func TestLRUCache(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cache := lruCache.NewLRU(3, 1*time.Second, "@every 2s")
+			cache := lruCache.NewLRU(3, 1*time.Second, 2*time.Second)
 			tt.setup(cache)
 			if tt.sleepAfter > 0 {
 				time.Sleep(tt.sleepAfter)

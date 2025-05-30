@@ -2,8 +2,6 @@ package lru_cache
 
 import (
 	"container/list"
-	"fmt"
-	"github.com/robfig/cron/v3"
 	"sync"
 	"time"
 )
@@ -19,21 +17,19 @@ type LRU struct {
 	Queue    *list.List
 	Items    sync.Map
 	ttl      time.Duration
+	stop     chan struct{}
 }
 
-func NewLRU(capacity int, ttl time.Duration, interval string) *LRU {
+func NewLRU(capacity int, ttl, interval time.Duration) *LRU {
 	cache := &LRU{
 		capacity: capacity,
 		Queue:    list.New(),
 		Items:    sync.Map{},
 		ttl:      ttl,
+		stop:     make(chan struct{}),
 	}
 
-	c := cron.New()
-	if _, err := c.AddFunc(interval, cache.cleanExpired); err != nil {
-		fmt.Println(err)
-	}
-	c.Start()
+	go cache.startCleaner(interval)
 
 	return cache
 }
@@ -93,7 +89,6 @@ func (c *LRU) evict() {
 }
 
 func (c *LRU) cleanExpired() {
-	var toDelete []string
 
 	c.Items.Range(func(k, v interface{}) bool {
 		element := v.(*list.Element)
@@ -101,12 +96,26 @@ func (c *LRU) cleanExpired() {
 
 		if time.Now().After(item.ExpiresAt) {
 			c.Queue.Remove(element)
-			toDelete = append(toDelete, item.Key)
+			c.Items.Delete(k)
 		}
 		return true
 	})
+}
 
-	for _, k := range toDelete {
-		c.Items.Delete(k)
+func (c *LRU) startCleaner(interval time.Duration) {
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			c.cleanExpired()
+		case <-c.stop:
+			return
+		}
 	}
+}
+
+func (c *LRU) Close() {
+	close(c.stop)
 }

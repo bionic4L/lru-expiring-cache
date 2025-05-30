@@ -22,9 +22,9 @@ import (
 )
 
 const (
-	CacheCapacity = 10
-	TTL           = 10 * time.Second
-	CronInterval  = "@every 60s"
+	CacheCapacity   = 10
+	TTL             = 10 * time.Second
+	CleanerInterval = 60 * time.Second
 )
 
 func Printer(cache *lruCache.LRU) {
@@ -45,7 +45,7 @@ func Printer(cache *lruCache.LRU) {
 }
 
 func main() {
-	cache := lruCache.NewLRU(CacheCapacity, TTL, CronInterval)
+	cache := lruCache.NewLRU(CacheCapacity, TTL, CleanerInterval)
 	scanner := bufio.NewScanner(os.Stdin)
 
 	fmt.Println("Enter one of the following commands:")
