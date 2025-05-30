@@ -30,7 +30,7 @@ func (c *LRU) Set(key string, value interface{}) bool {
 		item := element.Value.(*Item)
 
 		item.Value = value
-		c.Queue.PushFront(element)
+		c.Queue.MoveToFront(element)
 
 		return true
 	}
