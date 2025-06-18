@@ -46,6 +46,8 @@ func Printer(cache *lruCache.LRU) {
 
 func main() {
 	cache := lruCache.NewLRU(CacheCapacity, TTL, CleanerInterval)
+	defer cache.Close()
+
 	scanner := bufio.NewScanner(os.Stdin)
 
 	fmt.Println("Enter one of the following commands:")

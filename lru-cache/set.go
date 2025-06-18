@@ -18,6 +18,8 @@ func (c *LRU) Set(key string, value interface{}) bool {
 		return true
 	}
 
+	c.cleanExpired()
+
 	if c.Queue.Len() == c.capacity {
 		c.evict()
 	}

@@ -17,6 +17,7 @@ func (c *LRU) Get(key string) interface{} {
 	if time.Now().After(item.ExpiresAt) {
 		c.Queue.Remove(element)
 		c.Items.Delete(key)
+		return nil
 	}
 
 	c.Queue.MoveToFront(element)
