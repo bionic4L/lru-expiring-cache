@@ -20,6 +20,7 @@ type LRU struct {
 	stop     chan struct{}
 }
 
+// NewLRU creates new LRU cache
 func NewLRU(capacity int, ttl, interval time.Duration) *LRU {
 	cache := &LRU{
 		capacity: capacity,

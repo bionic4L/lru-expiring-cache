@@ -5,6 +5,12 @@ import (
 	"time"
 )
 
+/*
+Set create Item and add it to Items map if it doesn't exist and updates if vice versa.
+
+Before creating check expired Items and capacity. If there is some expired Items – deleting
+them and evicting process wont be started, if vice versa – evict element from queue.
+*/
 func (c *LRU) Set(key string, value interface{}) bool {
 	if v, exists := c.Items.Load(key); exists {
 		element := v.(*list.Element)

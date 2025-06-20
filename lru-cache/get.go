@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+/*
+Get returns Item.Value and move element to front of queue.
+Also, checks if Item expired – if true delete it and return nil.
+*/
 func (c *LRU) Get(key string) interface{} {
 	value, exists := c.Items.Load(key)
 	if !exists {

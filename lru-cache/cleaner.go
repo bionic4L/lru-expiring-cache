@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// cleanExpired checks expired items and delete them
 func (c *LRU) cleanExpired() {
 
 	c.Items.Range(func(k, v interface{}) bool {
@@ -19,6 +20,7 @@ func (c *LRU) cleanExpired() {
 	})
 }
 
+// startCleaner starts new ticker and trigger cleanExpired when ticker ticks
 func (c *LRU) startCleaner(interval time.Duration) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
